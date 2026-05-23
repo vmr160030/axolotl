@@ -1303,13 +1303,16 @@ def _build_valley_overflow_summary(audit_records, valley_limit, bin_step=200, ha
 
 
 def main(exp_name, datafile_name):
-    raw_dir = '/home/vyomr/Desktop/data/raw'
-    mnt_raw_dir = '/mnt/Volumes/data-1/data/raw'
-    binpath = os.path.join(mnt_raw_dir, exp_name, datafile_name)
-    savedir = os.path.join(raw_dir, exp_name, f'{datafile_name}_lh_run')
+    save_parent_dir = '/home/vyomr/Desktop/data/raw'
+    data_raw_dir = '/mnt/Volumes/data-1/data/raw'
+    if not os.path.exists(data_raw_dir):
+        data_raw_dir = ra.RAW_DIR
+        save_parent_dir = ra.RAW_DIR
+    binpath = os.path.join(data_raw_dir, exp_name, datafile_name)
+    save_sub_dir = os.path.join(save_parent_dir, exp_name, f'{datafile_name}_lh_run')
     # Change dir to savedir
-    os.makedirs(savedir, exist_ok=True)
-    os.chdir(savedir)
+    os.makedirs(save_sub_dir, exist_ok=True)
+    os.chdir(save_sub_dir)
     rt = ra.RawTraces(binpath=binpath)
     rt.load_bin_data(verbose=True)
 
@@ -1318,7 +1321,7 @@ def main(exp_name, datafile_name):
     raw_orig = rt.r_data.T
     print(f"raw_orig shape: {raw_orig.shape}")
 
-    baseline_path = os.path.join(raw_dir, exp_name, f"{datafile_name}_baseline_derivative_20k.json")
+    baseline_path = os.path.join(save_parent_dir, exp_name, f"{datafile_name}_baseline_derivative_20k.json")
 
     segment_len = 20_000
     if os.path.exists(baseline_path):
@@ -2150,7 +2153,7 @@ def main(exp_name, datafile_name):
     # save_path = Path("/Volumes/Lab/Users/alexth/axolotl/202310301/data002/lh_run_dump.pkl")
     # save_path = Path("/Volumes/Lab/Users/alexth/axolotl/202512300/data001/lh_run_dump.pkl")
     # save_path = Path("/Volumes/Lab/Users/alexth/axolotl/201808079/data007_lh_run_dump.pkl")
-    save_path = os.path.join(raw_dir, exp_name, f'{datafile_name}_lh_run_dump.pkl')
+    save_path = os.path.join(save_parent_dir, exp_name, f'{datafile_name}_lh_run_dump.pkl')
 
 
     lh_dump = {
